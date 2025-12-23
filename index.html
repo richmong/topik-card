@@ -3,22 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SNS 공유를 위한 OG 태그 (Open Graph) -->
+    <meta property="og:title" content="TOPIK 한국어 속담 카드">
+    <meta property="og:description" content="한국어능력시험(TOPIK) 필수 속담, 하루 1분이면 완벽 마스터!">
+    <meta property="og:image" content="https://placehold.co/1200x630/4a69bd/ffffff?text=TOPIK+Proverbs+Card">
+    <meta property="og:type" content="website">
+
     <title>Korean Proverb Flashcards (TOPIK)</title>
     <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=Noto+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* 세련된 블루 테마 */
-            --bg-gradient: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
-            --primary-color: #4a69bd; /* 차분한 파란색 */
-            --text-color: #2f3542;
-            --accent-color: #eb4d4b; /* 강조색 (배지) */
-            --card-width: 320px;
-            --card-height: 540px;
+            /* 세련된 블루 & 네이비 테마 */
+            --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            --primary-color: #2c3e50; /* 진한 네이비 (신뢰감) */
+            --point-color: #3498db; /* 밝은 블루 (버튼 등) */
+            --accent-color: #e74c3c; /* 배지 색상 */
+            --text-color: #2c3e50;
+            --card-width: 300px;
+            --card-height: 500px;
         }
 
         body {
             margin: 0;
-            background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%); /* 산뜻한 블루 그라데이션 */
+            background: var(--bg-gradient);
             font-family: 'Noto Sans', sans-serif;
             display: flex;
             flex-direction: column;
@@ -29,36 +37,46 @@
             color: var(--text-color);
         }
 
-        /* 상단 헤더 영역 */
+        /* 1. 헤더 영역 */
         header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             z-index: 10;
         }
 
         h1 {
             margin: 0;
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 800;
-            color: #1e3799;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            color: var(--primary-color);
+            letter-spacing: -0.5px;
         }
         
         .subtitle {
-            font-size: 14px;
-            color: #57606f;
-            margin-top: 5px;
-            font-weight: 500;
+            font-size: 13px;
+            color: #57606f; /* 진한 청회색 */
+            margin-top: 4px;
+            font-weight: 600;
         }
 
-        /* 3D 카드 컨테이너 */
+        /* 2. 메인 컨테이너 (버튼 - 카드 - 버튼 배치를 위함) */
+        .main-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 800px;
+            position: relative;
+        }
+
+        /* 3D 카드 영역 */
         .scene {
             width: var(--card-width);
             height: var(--card-height);
             perspective: 1000px;
-            margin-bottom: 20px;
             cursor: pointer;
             position: relative;
+            margin: 0 20px; /* 좌우 버튼과 간격 */
         }
 
         .card {
@@ -67,8 +85,8 @@
             position: relative;
             transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
             transform-style: preserve-3d;
-            border-radius: 24px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
         }
 
         .card.is-flipped {
@@ -82,7 +100,7 @@
             height: 100%;
             -webkit-backface-visibility: hidden;
             backface-visibility: hidden;
-            border-radius: 24px;
+            border-radius: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -94,286 +112,235 @@
             border: 1px solid rgba(0,0,0,0.05);
         }
 
-        /* 앞면 디자인 */
-        .card-front {
-            background: white;
-        }
-
-        /* 뒷면 디자인 */
+        .card-front { background: white; }
         .card-back {
             transform: rotateY(180deg);
-            background: #fdfdfd;
-            border: 3px solid var(--primary-color);
-            justify-content: flex-start; /* 내용은 위에서부터 배치 */
-            padding-top: 60px; /* 배지 공간 확보 */
+            background: #fff;
+            border: 3px solid var(--point-color);
+            justify-content: flex-start;
+            padding-top: 50px;
         }
 
-        /* TOPIK 배지 (앞/뒤 모두 표시) */
+        /* 배지 */
         .topik-badge {
             position: absolute;
-            top: 20px;
-            right: 20px;
+            top: 15px;
+            right: 15px;
             background: var(--accent-color);
             color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
+            padding: 4px 10px;
+            border-radius: 12px;
             font-size: 11px;
             font-weight: 800;
-            box-shadow: 0 4px 6px rgba(235, 77, 75, 0.3);
+            box-shadow: 0 3px 6px rgba(231, 76, 60, 0.3);
             z-index: 5;
         }
 
-        /* 내용 스타일 */
-        .emoji-area {
-            font-size: 72px;
-            margin-bottom: 25px;
-            filter: drop-shadow(0 4px 4px rgba(0,0,0,0.1));
-        }
-
+        /* 카드 내용 */
+        .emoji-area { font-size: 64px; margin-bottom: 20px; filter: drop-shadow(0 4px 4px rgba(0,0,0,0.1)); }
         .korean-text {
             font-family: 'Nanum Myeongjo', serif;
-            font-size: 26px;
+            font-size: 24px;
             font-weight: 800;
-            line-height: 1.4;
+            line-height: 1.35;
             word-break: keep-all;
-            color: #2f3542;
-            margin-bottom: 15px;
+            color: #2c3e50;
+            margin-bottom: 10px;
         }
-
         .pronunciation {
-            font-size: 14px;
-            color: var(--primary-color);
-            font-weight: 600;
-            margin-bottom: 40px;
-            font-style: italic;
-            opacity: 0.9;
-        }
-
-        /* 뒷면 텍스트 영역 */
-        .back-content {
-            width: 100%;
-            text-align: left;
-            margin-bottom: auto; /* 하단 문구를 밀어내기 위함 */
-        }
-
-        .section-label {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: #a4b0be;
-            font-weight: 800;
-            margin-top: 20px;
-            margin-bottom: 8px;
-            border-bottom: 2px solid #f1f2f6;
-            padding-bottom: 4px;
-            width: 100%;
-        }
-
-        .english-text {
-            font-size: 15px;
-            line-height: 1.6;
-            color: #2f3542;
-            word-break: keep-all;
-        }
-
-        .literal-meaning {
-            font-family: 'Nanum Myeongjo', serif; /* 약간 다른 느낌 */
-            font-style: italic;
-            color: #57606f;
-        }
-
-        /* 뒷면 하단 응원 문구 */
-        .cheer-footer {
-            margin-top: 20px;
-            font-size: 12px;
-            color: #a4b0be;
-            font-weight: 500;
-            border-top: 1px dashed #ced6e0;
-            padding-top: 15px;
-            width: 100%;
-        }
-
-        .tap-hint {
-            position: absolute;
-            bottom: 30px;
             font-size: 13px;
-            color: #ced6e0;
-            animation: blink 2s infinite;
+            color: var(--point-color);
+            font-weight: 600;
+            margin-bottom: 30px;
+            font-style: italic;
         }
 
-        /* 컨트롤 영역 */
-        .controls {
+        /* 뒷면 내용 */
+        .back-content { width: 100%; text-align: left; margin-bottom: auto; }
+        .section-label {
+            font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px;
+            color: #95a5a6; font-weight: 800; margin-top: 15px; margin-bottom: 5px;
+            border-bottom: 1px solid #ecf0f1; padding-bottom: 2px; width: 100%;
+        }
+        .english-text { font-size: 14px; line-height: 1.5; color: #34495e; word-break: keep-all; }
+        .literal-meaning { font-family: 'Nanum Myeongjo', serif; font-style: italic; color: #7f8c8d; }
+        .cheer-footer { margin-top: 15px; font-size: 11px; color: #bdc3c7; font-weight: 500; border-top: 1px dashed #ecf0f1; padding-top: 10px; width: 100%; }
+        .tap-hint { position: absolute; bottom: 20px; font-size: 12px; color: #bdc3c7; animation: blink 2s infinite; }
+
+        /* 3. 좌우 네비게이션 버튼 (카드 옆으로 이동) */
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid white;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            color: var(--primary-color);
             display: flex;
-            gap: 20px;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            backdrop-filter: blur(4px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        .nav-btn:hover { background: white; transform: scale(1.1); box-shadow: 0 6px 15px rgba(0,0,0,0.1); }
+        .nav-btn:active { transform: scale(0.95); }
+
+        /* 4. 하단 컨트롤 영역 (숫자 & Stop 버튼 나란히) */
+        .bottom-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: var(--card-width); /* 카드 너비와 동일하게 */
+            margin-top: 20px;
+            z-index: 10;
+        }
+
+        /* 숫자와 버튼의 공통 스타일 정의 */
+        .progress, .stop-btn {
+            background: white;
+            color: black; /* 검정색 통일 */
+            border: 2px solid #ecf0f1;
+            width: 110px; /* 크기 통일 */
+            height: 42px; /* 크기 통일 */
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 700;
+            display: flex; /* 내용 중앙 정렬을 위해 */
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            box-sizing: border-box;
+            padding: 0; /* 패딩 초기화 */
+        }
+
+        /* 숫자 표시 전용 스타일 (기존 .progress 대체) */
+        .progress {
+            /* 공통 스타일 상속받음 */
+        }
+
+        /* Stop 버튼 전용 스타일 (기존 .stop-btn 대체) */
+        .stop-btn {
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .stop-btn:hover { 
+            background: #f1f2f6; 
+            border-color: #bdc3c7;
+            transform: translateY(-2px);
+        }
+
+        /* 제작자 크레딧 */
+        footer {
+            margin-top: 15px;
+            display: flex;
+            flex-direction: column;
             align-items: center;
             z-index: 10;
         }
 
-        .btn {
-            background: white;
-            border: none;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            font-size: 20px;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #57606f;
+        .creator-credit {
+            font-size: 12px;
+            color: #57606f; 
+            font-weight: 600; 
         }
 
-        .btn:hover {
-            transform: translateY(-3px);
-            background: var(--primary-color);
-            color: white;
-            box-shadow: 0 8px 20px rgba(74, 105, 189, 0.4);
-        }
-        
-        .progress {
-            font-size: 15px;
-            font-weight: bold;
-            color: #1e3799; /* 배경 위에서 잘 보이게 */
-            width: 80px;
-            text-align: center;
-            background: rgba(255,255,255,0.5);
-            padding: 5px 10px;
-            border-radius: 15px;
-        }
-
-        /* 종료 버튼 */
-        .stop-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(255, 255, 255, 0.3);
-            border: 1px solid white;
-            color: #1e3799;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: bold;
-            cursor: pointer;
-            backdrop-filter: blur(5px);
-            transition: all 0.2s;
-            z-index: 100;
+        /* 반응형: 모바일에서 버튼 위치 조정 */
+        @media (max-width: 500px) {
+            .scene { margin: 0; } /* 카드 옆 간격 제거 */
+            .main-container { justify-content: space-between; padding: 0 10px; box-sizing: border-box; }
+            .nav-btn {
+                position: absolute;
+                z-index: 10;
+                background: rgba(255, 255, 255, 0.8);
+                box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            }
+            .nav-btn.prev { left: 10px; }
+            .nav-btn.next { right: 10px; }
+            .card { transform: scale(0.9); } /* 모바일에서 카드 살짝 축소 */
+            
+            /* 모바일에서 컨트롤 박스도 카드 스케일에 맞춰 살짝 줄이거나 조정 */
+            .bottom-controls {
+                width: calc(var(--card-width) * 0.9);
+            }
         }
 
-        .stop-btn:hover {
-            background: white;
-            color: var(--primary-color);
-        }
-
-        /* 결과 화면 (모달) */
+        /* 결과 화면 */
         #resultScreen {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(30, 55, 153, 0.95);
-            z-index: 200;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            text-align: center;
-            animation: fadeIn 0.5s;
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(44, 62, 80, 0.95); z-index: 200;
+            flex-direction: column; justify-content: center; align-items: center;
+            color: white; text-align: center; animation: fadeIn 0.5s;
         }
-
-        .result-content {
-            background: white;
-            color: #2f3542;
-            padding: 40px;
-            border-radius: 30px;
-            width: 80%;
-            max-width: 320px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }
-
-        .result-emoji { font-size: 60px; margin-bottom: 20px; display: block; }
-        .result-title { font-size: 24px; font-weight: 800; margin-bottom: 10px; color: var(--primary-color); }
-        .result-text { font-size: 16px; margin-bottom: 30px; color: #57606f; line-height: 1.5; }
-        .restart-btn {
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 50px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-        }
-
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .result-content { background: white; color: #2c3e50; padding: 40px; border-radius: 30px; width: 80%; max-width: 320px; }
+        .restart-btn { background: var(--point-color); color: white; border: none; padding: 12px 30px; border-radius: 50px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 20px; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
     </style>
 </head>
 <body>
-
-    <!-- 종료 버튼 -->
-    <button class="stop-btn" onclick="finishStudy()">Stop ⛔</button>
 
     <header>
         <h1>🇰🇷 TOPIK Proverb</h1>
         <div class="subtitle">Touch card to flip</div>
     </header>
 
-    <div class="scene">
-        <div class="card" onclick="flipCard()">
-            <!-- 배지는 JS로 양면에 모두 추가됨 -->
-            
-            <!-- Front -->
-            <div class="card-face card-front">
-                <div class="topik-badge">TOPIK II ⭐</div>
-                <div class="emoji-area" id="frontEmoji">🐮</div>
-                <div class="korean-text" id="frontKorean">소 잃고 외양간 고친다</div>
-                <div class="pronunciation" id="frontPronunciation">So il-go oe-yang-gan go-chin-da</div>
-                <div class="tap-hint">👆 Tap for meaning</div>
-            </div>
+    <div class="main-container">
+        <!-- 왼쪽 버튼 -->
+        <button class="nav-btn prev" onclick="prevCard()">❮</button>
 
-            <!-- Back -->
-            <div class="card-face card-back">
-                <div class="topik-badge">TOPIK II ⭐</div>
-                
-                <div class="back-content">
-                    <div class="section-label">Literal Meaning</div>
-                    <div class="english-text literal-meaning" id="backLiteral">"Mending the barn after losing the cow."</div>
-                    
-                    <div class="section-label" style="color: var(--primary-color);">Actual Meaning</div>
-                    <div class="english-text" id="backMeaning" style="font-weight: bold;">It is useless to take precautions after the damage is already done.</div>
-                    
-                    <div class="section-label">Similar to</div>
-                    <div class="english-text" id="backSimilar">"Locking the stable door after the horse has bolted."</div>
+        <div class="scene">
+            <div class="card" onclick="flipCard()">
+                <!-- Front -->
+                <div class="card-face card-front">
+                    <div class="topik-badge">TOPIK II ⭐</div>
+                    <div class="emoji-area" id="frontEmoji">🐮</div>
+                    <div class="korean-text" id="frontKorean">소 잃고 외양간 고친다</div>
+                    <div class="pronunciation" id="frontPronunciation">So il-go oe-yang-gan go-chin-da</div>
+                    <div class="tap-hint">👆 Tap for meaning</div>
                 </div>
 
-                <div class="cheer-footer">
-                    한국어능력시험 기준 | 당신을 응원해요 ✨
+                <!-- Back -->
+                <div class="card-face card-back">
+                    <div class="topik-badge">TOPIK II ⭐</div>
+                    <div class="back-content">
+                        <div class="section-label">Literal Meaning</div>
+                        <div class="english-text literal-meaning" id="backLiteral">"Mending the barn after losing the cow."</div>
+                        <div class="section-label" style="color: var(--point-color);">Actual Meaning</div>
+                        <div class="english-text" id="backMeaning" style="font-weight: bold;">It is useless to take precautions after the damage is already done.</div>
+                        <div class="section-label">Similar to</div>
+                        <div class="english-text" id="backSimilar">"Locking the stable door after the horse has bolted."</div>
+                    </div>
+                    <div class="cheer-footer">
+                        한국어능력시험 기준 | 당신을 응원해요 ✨
+                    </div>
                 </div>
             </div>
         </div>
+
+        <!-- 오른쪽 버튼 -->
+        <button class="nav-btn next" onclick="nextCard()">❯</button>
     </div>
 
-    <div class="controls">
-        <button class="btn" onclick="prevCard()">❮</button>
+    <!-- 하단 컨트롤 영역 (숫자와 Stop 버튼 나란히 배치) -->
+    <div class="bottom-controls">
         <div class="progress" id="progressText">1 / 30</div>
-        <button class="btn" onclick="nextCard()">❯</button>
+        <button class="stop-btn" onclick="finishStudy()">Stop ⛔</button>
     </div>
 
-    <!-- 결과 화면 (숨김 상태) -->
+    <footer>
+        <!-- 제작자 이름 수정됨 -->
+        <div class="creator-credit">Created by HEETORI(고희원)</div>
+    </footer>
+
+    <!-- 결과 화면 -->
     <div id="resultScreen">
         <div class="result-content">
-            <span class="result-emoji">🎉</span>
-            <div class="result-title">Great Job!</div>
-            <div class="result-text" id="resultMessage">
-                You studied <strong>0</strong> proverbs today.<br>
-                Keep it up for TOPIK!
-            </div>
+            <span style="font-size: 60px; display:block; margin-bottom:20px;">🎉</span>
+            <h2 style="margin:0; margin-bottom:10px; color:var(--point-color);">Great Job!</h2>
+            <div id="resultMessage" style="font-size:16px; color:#7f8c8d; line-height:1.5;"></div>
             <button class="restart-btn" onclick="restartStudy()">Study Again ↻</button>
         </div>
     </div>
@@ -413,27 +380,21 @@
         { k: "호랑이도 제 말 하면 온다", p: "Ho-rang-i-do je mal ha-myeon...", l: "Tiger comes when mentioned.", m: "Appears just when spoken of.", s: "Speak of the devil.", e: "🐯😲" }
     ];
 
-    // 변수 선언
     let currentDeck = [];
     let currentIndex = 0;
-    let visitedIndices = new Set(); // 공부한 카드 추적용
+    let visitedIndices = new Set(); 
 
     const card = document.querySelector('.card');
-    
-    // Elements
     const frontKorean = document.getElementById('frontKorean');
     const frontPronunciation = document.getElementById('frontPronunciation');
     const frontEmoji = document.getElementById('frontEmoji');
-    
     const backLiteral = document.getElementById('backLiteral');
     const backMeaning = document.getElementById('backMeaning');
     const backSimilar = document.getElementById('backSimilar');
-    
     const progressText = document.getElementById('progressText');
     const resultScreen = document.getElementById('resultScreen');
     const resultMessage = document.getElementById('resultMessage');
 
-    // 1. 셔플 기능 (Fisher-Yates)
     function shuffle(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -442,13 +403,11 @@
         return array;
     }
 
-    // 2. 초기화 함수
     function initApp() {
-        // 데이터 복사 후 셔플
         currentDeck = shuffle([...proverbsData]);
         currentIndex = 0;
         visitedIndices = new Set();
-        visitedIndices.add(0); // 첫 카드는 본 것으로 처리
+        visitedIndices.add(0);
         
         resultScreen.style.display = 'none';
         card.classList.remove('is-flipped');
@@ -456,9 +415,7 @@
         updateDisplay();
     }
 
-    // 3. 화면 업데이트
     function updateDisplay() {
-        // 뒤집힌 상태라면 먼저 원복 후 내용 교체 (자연스럽게)
         if (card.classList.contains('is-flipped')) {
             card.classList.remove('is-flipped');
             setTimeout(() => {
@@ -471,30 +428,20 @@
 
     function setContent() {
         const item = currentDeck[currentIndex];
-        
-        // Front
         frontKorean.innerHTML = item.k.replace(/\n/g, '<br>');
         frontPronunciation.textContent = item.p;
         frontEmoji.textContent = item.e;
-        
-        // Back
         backLiteral.textContent = `"${item.l}"`;
         backMeaning.textContent = item.m;
         backSimilar.textContent = `"${item.s}"`;
-        
-        // Progress
         progressText.textContent = `${currentIndex + 1} / ${currentDeck.length}`;
-        
-        // 공부한 기록 추가
         visitedIndices.add(currentIndex);
     }
 
-    // 4. 카드 뒤집기
     function flipCard() {
         card.classList.toggle('is-flipped');
     }
 
-    // 5. 네비게이션
     function nextCard() {
         currentIndex = (currentIndex + 1) % currentDeck.length;
         updateDisplay();
@@ -505,19 +452,16 @@
         updateDisplay();
     }
 
-    // 6. 학습 종료 및 결과 보기
     function finishStudy() {
         const studiedCount = visitedIndices.size;
-        resultMessage.innerHTML = `오늘 <strong>${studiedCount}</strong>개의 속담을 공부하셨네요!<br>정말 훌륭해요! 👏`;
+        resultMessage.innerHTML = `You studied <strong>${studiedCount}</strong> proverbs today.<br>Keep it up for TOPIK!`;
         resultScreen.style.display = 'flex';
     }
 
-    // 7. 재시작
     function restartStudy() {
         initApp();
     }
 
-    // 앱 시작
     initApp();
 
 </script>
