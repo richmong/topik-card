@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Korean Proverb Flashcards (TOPIK)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=Noto+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* 세련된 블루 테마 */
+            --bg-gradient: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+            --primary-color: #4a69bd; /* 차분한 파란색 */
+            --text-color: #2f3542;
+            --accent-color: #eb4d4b; /* 강조색 (배지) */
+            --card-width: 320px;
+            --card-height: 540px;
+        }
+
+        body {
+            margin: 0;
+            background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%); /* 산뜻한 블루 그라데이션 */
+            font-family: 'Noto Sans', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+            color: var(--text-color);
+        }
+
+        /* 상단 헤더 영역 */
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            z-index: 10;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 800;
+            color: #1e3799;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .subtitle {
+            font-size: 14px;
+            color: #57606f;
+            margin-top: 5px;
+            font-weight: 500;
+        }
+
+        /* 3D 카드 컨테이너 */
+        .scene {
+            width: var(--card-width);
+            height: var(--card-height);
+            perspective: 1000px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+        }
+
+        .card.is-flipped {
+            transform: rotateY(180deg);
+        }
+
+        /* 카드 앞/뒷면 공통 */
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            box-sizing: border-box;
+            text-align: center;
+            background: white;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        /* 앞면 디자인 */
+        .card-front {
+            background: white;
+        }
+
+        /* 뒷면 디자인 */
+        .card-back {
+            transform: rotateY(180deg);
+            background: #fdfdfd;
+            border: 3px solid var(--primary-color);
+            justify-content: flex-start; /* 내용은 위에서부터 배치 */
+            padding-top: 60px; /* 배지 공간 확보 */
+        }
+
+        /* TOPIK 배지 (앞/뒤 모두 표시) */
+        .topik-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--accent-color);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 800;
+            box-shadow: 0 4px 6px rgba(235, 77, 75, 0.3);
+            z-index: 5;
+        }
+
+        /* 내용 스타일 */
+        .emoji-area {
+            font-size: 72px;
+            margin-bottom: 25px;
+            filter: drop-shadow(0 4px 4px rgba(0,0,0,0.1));
+        }
+
+        .korean-text {
+            font-family: 'Nanum Myeongjo', serif;
+            font-size: 26px;
+            font-weight: 800;
+            line-height: 1.4;
+            word-break: keep-all;
+            color: #2f3542;
+            margin-bottom: 15px;
+        }
+
+        .pronunciation {
+            font-size: 14px;
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 40px;
+            font-style: italic;
+            opacity: 0.9;
+        }
+
+        /* 뒷면 텍스트 영역 */
+        .back-content {
+            width: 100%;
+            text-align: left;
+            margin-bottom: auto; /* 하단 문구를 밀어내기 위함 */
+        }
+
+        .section-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #a4b0be;
+            font-weight: 800;
+            margin-top: 20px;
+            margin-bottom: 8px;
+            border-bottom: 2px solid #f1f2f6;
+            padding-bottom: 4px;
+            width: 100%;
+        }
+
+        .english-text {
+            font-size: 15px;
+            line-height: 1.6;
+            color: #2f3542;
+            word-break: keep-all;
+        }
+
+        .literal-meaning {
+            font-family: 'Nanum Myeongjo', serif; /* 약간 다른 느낌 */
+            font-style: italic;
+            color: #57606f;
+        }
+
+        /* 뒷면 하단 응원 문구 */
+        .cheer-footer {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #a4b0be;
+            font-weight: 500;
+            border-top: 1px dashed #ced6e0;
+            padding-top: 15px;
+            width: 100%;
+        }
+
+        .tap-hint {
+            position: absolute;
+            bottom: 30px;
+            font-size: 13px;
+            color: #ced6e0;
+            animation: blink 2s infinite;
+        }
+
+        /* 컨트롤 영역 */
+        .controls {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .btn {
+            background: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #57606f;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            background: var(--primary-color);
+            color: white;
+            box-shadow: 0 8px 20px rgba(74, 105, 189, 0.4);
+        }
+        
+        .progress {
+            font-size: 15px;
+            font-weight: bold;
+            color: #1e3799; /* 배경 위에서 잘 보이게 */
+            width: 80px;
+            text-align: center;
+            background: rgba(255,255,255,0.5);
+            padding: 5px 10px;
+            border-radius: 15px;
+        }
+
+        /* 종료 버튼 */
+        .stop-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.3);
+            border: 1px solid white;
+            color: #1e3799;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            transition: all 0.2s;
+            z-index: 100;
+        }
+
+        .stop-btn:hover {
+            background: white;
+            color: var(--primary-color);
+        }
+
+        /* 결과 화면 (모달) */
+        #resultScreen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(30, 55, 153, 0.95);
+            z-index: 200;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+            animation: fadeIn 0.5s;
+        }
+
+        .result-content {
+            background: white;
+            color: #2f3542;
+            padding: 40px;
+            border-radius: 30px;
+            width: 80%;
+            max-width: 320px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .result-emoji { font-size: 60px; margin-bottom: 20px; display: block; }
+        .result-title { font-size: 24px; font-weight: 800; margin-bottom: 10px; color: var(--primary-color); }
+        .result-text { font-size: 16px; margin-bottom: 30px; color: #57606f; line-height: 1.5; }
+        .restart-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    </style>
+</head>
+<body>
+
+    <!-- 종료 버튼 -->
+    <button class="stop-btn" onclick="finishStudy()">Stop ⛔</button>
+
+    <header>
+        <h1>🇰🇷 TOPIK Proverb</h1>
+        <div class="subtitle">Touch card to flip</div>
+    </header>
+
+    <div class="scene">
+        <div class="card" onclick="flipCard()">
+            <!-- 배지는 JS로 양면에 모두 추가됨 -->
+            
+            <!-- Front -->
+            <div class="card-face card-front">
+                <div class="topik-badge">TOPIK II ⭐</div>
+                <div class="emoji-area" id="frontEmoji">🐮</div>
+                <div class="korean-text" id="frontKorean">소 잃고 외양간 고친다</div>
+                <div class="pronunciation" id="frontPronunciation">So il-go oe-yang-gan go-chin-da</div>
+                <div class="tap-hint">👆 Tap for meaning</div>
+            </div>
+
+            <!-- Back -->
+            <div class="card-face card-back">
+                <div class="topik-badge">TOPIK II ⭐</div>
+                
+                <div class="back-content">
+                    <div class="section-label">Literal Meaning</div>
+                    <div class="english-text literal-meaning" id="backLiteral">"Mending the barn after losing the cow."</div>
+                    
+                    <div class="section-label" style="color: var(--primary-color);">Actual Meaning</div>
+                    <div class="english-text" id="backMeaning" style="font-weight: bold;">It is useless to take precautions after the damage is already done.</div>
+                    
+                    <div class="section-label">Similar to</div>
+                    <div class="english-text" id="backSimilar">"Locking the stable door after the horse has bolted."</div>
+                </div>
+
+                <div class="cheer-footer">
+                    한국어능력시험 기준 | 당신을 응원해요 ✨
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="btn" onclick="prevCard()">❮</button>
+        <div class="progress" id="progressText">1 / 30</div>
+        <button class="btn" onclick="nextCard()">❯</button>
+    </div>
+
+    <!-- 결과 화면 (숨김 상태) -->
+    <div id="resultScreen">
+        <div class="result-content">
+            <span class="result-emoji">🎉</span>
+            <div class="result-title">Great Job!</div>
+            <div class="result-text" id="resultMessage">
+                You studied <strong>0</strong> proverbs today.<br>
+                Keep it up for TOPIK!
+            </div>
+            <button class="restart-btn" onclick="restartStudy()">Study Again ↻</button>
+        </div>
+    </div>
+
+<script>
+    // TOPIK 필수 속담 30개 데이터
+    const proverbsData = [
+        { k: "소 잃고 외양간 고친다", p: "So il-go oe-yang-gan go-chin-da", l: "Mending the barn after losing the cow.", m: "Useless to take precautions after damage is done.", s: "Locking the stable door after the horse has bolted.", e: "🐮🏚️" },
+        { k: "가는 날이 장날", p: "Ga-neun na-ri jang-nal", l: "The day you go is market day.", m: "Unexpected timing prevents you from doing what you planned.", s: "Bad timing.", e: "📅🛒" },
+        { k: "그림의 떡", p: "Geu-rim-ui tteok", l: "A rice cake in a picture.", m: "Something you desire but cannot have.", s: "Pie in the sky.", e: "🖼️🍰" },
+        { k: "누워서 떡 먹기", p: "Nu-wo-seo tteok meok-gi", l: "Eating rice cake lying down.", m: "A very easy task.", s: "A piece of cake.", e: "🛌🍡" },
+        { k: "비 온 뒤에 땅이 굳는다", p: "Bi on dwi-e ttang-i gut-neun-da", l: "Ground hardens after rain.", m: "Adversity makes you stronger.", s: "What doesn't kill you makes you stronger.", e: "🌧️💪" },
+        { k: "가는 말이 고와야 오는 말이 곱다", p: "Ga-neun ma-ri go-wa-ya...", l: "To hear nice words, say nice words first.", m: "Speak nicely to others to be treated well.", s: "What goes around comes around.", e: "🗣️❤️" },
+        { k: "등잔 밑이 어둡다", p: "Deung-jan mi-chi eo-dup-da", l: "Dark under the lamp.", m: "Hard to notice what is right in front of you.", s: "Right under your nose.", e: "🕯️🕶️" },
+        { k: "식은 죽 먹기", p: "Si-geun juk meok-gi", l: "Eating cold porridge.", m: "Very easy to do.", s: "Easy as pie.", e: "🥣😋" },
+        { k: "티끌 모아 태산", p: "Ti-kkeul mo-a tae-san", l: "Gather dust to make a mountain.", m: "Small things combined become huge.", s: "Little drops make an ocean.", e: "⛰️💰" },
+        { k: "산 넘어 산", p: "San neo-meo san", l: "Mountains beyond mountains.", m: "Hardships continue one after another.", s: "Out of the frying pan into the fire.", e: "⛰️😩" },
+        { k: "금강산도 식후경", p: "Geum-gang-san-do sik-hu-gyeong", l: "Even Mt. Geumgang after eating.", m: "Eating comes before any sightseeing.", s: "A loaf of bread is better than the song of many birds.", e: "🏔️🍱" },
+        { k: "원숭이도 나무에서 떨어진다", p: "Won-sung-i-do na-mu-e-seo...", l: "Even monkeys fall from trees.", m: "Everyone makes mistakes sometimes.", s: "Even Homer nods.", e: "🐒🌳" },
+        { k: "세 살 버릇 여든까지 간다", p: "Se sal beo-reut yeo-deun-kka-ji...", l: "Habits at 3 go to 80.", m: "Old habits are hard to break.", s: "Old habits die hard.", e: "👶👴" },
+        { k: "말 한마디로 천 냥 빚 갚는다", p: "Mal han-ma-di-ro cheon nyang...", l: "One word pays off 1000 nyang debt.", m: "Speaking well can solve big problems.", s: "Good words cost nothing.", e: "💬💰" },
+        { k: "배보다 배꼽이 더 크다", p: "Bae-bo-da bae-kkob-i deo keu-da", l: "Belly button is bigger than the belly.", m: "The side costs/issues are bigger than the main one.", s: "The tail wags the dog.", e: "🤰😮" },
+        { k: "고래 싸움에 새우 등 터진다", p: "Go-rae ssa-um-e sae-u deung...", l: "Shrimp's back breaks in whale fight.", m: "Innocent people get hurt in others' conflicts.", s: "Caught in the crossfire.", e: "🐳🦐" },
+        { k: "믿는 도끼에 발등 찍힌다", p: "Mit-neun do-kki-e bal-deung...", l: "Chopped foot by trusted axe.", m: "Betrayed by someone you trusted.", s: "Stabbed in the back.", e: "🪓🦶" },
+        { k: "아니 땐 굴뚝에 연기 날까", p: "A-ni ttaen gul-ttuk-e yeon-gi...", l: "Smoke from unlit chimney?", m: "Rumors usually have some cause.", s: "Where there's smoke, there's fire.", e: "🏭🔥" },
+        { k: "개천에서 용 난다", p: "Gae-cheon-e-seo yong nan-da", l: "Dragon rises from a stream.", m: "Great person comes from humble beginnings.", s: "Rags to riches.", e: "🐉🌊" },
+        { k: "꿩 대신 닭", p: "Kkwong dae-sin dak", l: "Chicken instead of pheasant.", m: "Using a substitute if the best isn't available.", s: "Better than nothing.", e: "🐓🐦" },
+        { k: "우물 안 개구리", p: "U-mul an gae-gu-ri", l: "Frog in the well.", m: "Someone with limited experience/view.", s: "Babe in the woods.", e: "🐸🕳️" },
+        { k: "쇠뿔도 단김에 빼라", p: "Soe-ppul-do dan-gim-e ppae-ra", l: "Pull out bull's horn while hot.", m: "Do things immediately when motivated.", s: "Strike while the iron is hot.", e: "🐂🔥" },
+        { k: "땅 짚고 헤엄치기", p: "Ttang jip-go he-eom-chi-gi", l: "Swimming while touching ground.", m: "Something extremely easy.", s: "Child's play.", e: "🏊‍♂️🆗" },
+        { k: "뛰는 놈 위에 나는 놈 있다", p: "Ttwi-neun nom wi-e na-neun...", l: "Above the runner is the flyer.", m: "There is always someone better.", s: "There is always a higher mountain.", e: "🏃✈️" },
+        { k: "사공이 많으면 배가 산으로 간다", p: "Sa-gong-i man-eu-myeon...", l: "Too many boatmen take the boat to the mountain.", m: "Too many leaders lead to failure.", s: "Too many cooks spoil the broth.", e: "🚣⛰️" },
+        { k: "누워서 침 뱉기", p: "Nu-wo-seo chim baet-gi", l: "Spitting while lying down.", m: "Harming yourself by trying to harm others.", s: "Cut off your nose to spite your face.", e: "🛌💦" },
+        { k: "윗물이 맑아야 아랫물이 맑다", p: "Wit-mu-ri mal-ga-ya...", l: "Top water must be clean for bottom to be clean.", m: "Leaders must set a good example.", s: "A fish rots from the head down.", e: "💧🌊" },
+        { k: "돌다리도 두들겨 보고 건너라", p: "Dol-da-ri-do du-deul-gyeo...", l: "Knock on stone bridge before crossing.", m: "Be careful even with familiar things.", s: "Look before you leap.", e: "🌉🔨" },
+        { k: "바늘 도둑이 소 도둑 된다", p: "Ba-neul do-duk-i so do-duk...", l: "Needle thief becomes cow thief.", m: "Small misdeeds lead to bigger ones.", s: "He that will steal a pin will steal a better thing.", e: "🪡🐄" },
+        { k: "호랑이도 제 말 하면 온다", p: "Ho-rang-i-do je mal ha-myeon...", l: "Tiger comes when mentioned.", m: "Appears just when spoken of.", s: "Speak of the devil.", e: "🐯😲" }
+    ];
+
+    // 변수 선언
+    let currentDeck = [];
+    let currentIndex = 0;
+    let visitedIndices = new Set(); // 공부한 카드 추적용
+
+    const card = document.querySelector('.card');
+    
+    // Elements
+    const frontKorean = document.getElementById('frontKorean');
+    const frontPronunciation = document.getElementById('frontPronunciation');
+    const frontEmoji = document.getElementById('frontEmoji');
+    
+    const backLiteral = document.getElementById('backLiteral');
+    const backMeaning = document.getElementById('backMeaning');
+    const backSimilar = document.getElementById('backSimilar');
+    
+    const progressText = document.getElementById('progressText');
+    const resultScreen = document.getElementById('resultScreen');
+    const resultMessage = document.getElementById('resultMessage');
+
+    // 1. 셔플 기능 (Fisher-Yates)
+    function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    // 2. 초기화 함수
+    function initApp() {
+        // 데이터 복사 후 셔플
+        currentDeck = shuffle([...proverbsData]);
+        currentIndex = 0;
+        visitedIndices = new Set();
+        visitedIndices.add(0); // 첫 카드는 본 것으로 처리
+        
+        resultScreen.style.display = 'none';
+        card.classList.remove('is-flipped');
+        
+        updateDisplay();
+    }
+
+    // 3. 화면 업데이트
+    function updateDisplay() {
+        // 뒤집힌 상태라면 먼저 원복 후 내용 교체 (자연스럽게)
+        if (card.classList.contains('is-flipped')) {
+            card.classList.remove('is-flipped');
+            setTimeout(() => {
+                setContent();
+            }, 300);
+        } else {
+            setContent();
+        }
+    }
+
+    function setContent() {
+        const item = currentDeck[currentIndex];
+        
+        // Front
+        frontKorean.innerHTML = item.k.replace(/\n/g, '<br>');
+        frontPronunciation.textContent = item.p;
+        frontEmoji.textContent = item.e;
+        
+        // Back
+        backLiteral.textContent = `"${item.l}"`;
+        backMeaning.textContent = item.m;
+        backSimilar.textContent = `"${item.s}"`;
+        
+        // Progress
+        progressText.textContent = `${currentIndex + 1} / ${currentDeck.length}`;
+        
+        // 공부한 기록 추가
+        visitedIndices.add(currentIndex);
+    }
+
+    // 4. 카드 뒤집기
+    function flipCard() {
+        card.classList.toggle('is-flipped');
+    }
+
+    // 5. 네비게이션
+    function nextCard() {
+        currentIndex = (currentIndex + 1) % currentDeck.length;
+        updateDisplay();
+    }
+
+    function prevCard() {
+        currentIndex = (currentIndex - 1 + currentDeck.length) % currentDeck.length;
+        updateDisplay();
+    }
+
+    // 6. 학습 종료 및 결과 보기
+    function finishStudy() {
+        const studiedCount = visitedIndices.size;
+        resultMessage.innerHTML = `오늘 <strong>${studiedCount}</strong>개의 속담을 공부하셨네요!<br>정말 훌륭해요! 👏`;
+        resultScreen.style.display = 'flex';
+    }
+
+    // 7. 재시작
+    function restartStudy() {
+        initApp();
+    }
+
+    // 앱 시작
+    initApp();
+
+</script>
+
+</body>
+</html>
